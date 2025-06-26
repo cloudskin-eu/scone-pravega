@@ -41,3 +41,11 @@ Then, in this directory, invoke `docker compose --env-file .env -f pravega/docke
 
 Change `.env` file to switch image to use.
 
+**Important** : it's very important to also remove the containers before subsequent run! Somehow many things break if this is not being done. One can simply use `docker-compose -f pravega/docker/compose/docker-compose-nfs.yml down`.
+
+All in all, I recommend the following command to copy-paste : 
+```
+sudo rm -rf pravega/docker/compose/data/ \
+&& docker compose --env-file .env -f pravega/docker/compose/docker-compose-nfs.yml up --force-recreate \
+&& docker-compose -f pravega/docker/compose/docker-compose-nfs.yml down
+```
