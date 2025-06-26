@@ -1,6 +1,18 @@
 # scone-pravega
 Benchmarks for Sconified Pravega server images
 
+TL;DR:
+
+- Prepare the image by running : `./prepare_pravega.sh`.
+- Wait
+- Run docker compose : `docker compose --env-file .env -f pravega/docker/compose/docker-compose-nfs.yml up`
+- Wait again
+- In another terminal, find out the IP of the controller : `docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' compose-controller-1` and put it in `config-rust-benchmark.yaml`.
+- Run the simple benchmark : 
+```
+docker run --rm --network=compose_default --entrypoint=/benchmark/pravega-rust-benchmark -v `pwd`:/data/:ro acueva/pravega-rust-benchmark /data/config-rust-benchmark.yaml
+```
+
 ## Status
 The status could be seen in the table below.
 
