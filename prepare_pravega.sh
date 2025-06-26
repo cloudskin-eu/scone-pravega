@@ -42,7 +42,7 @@ cp pravega-changes/docker-compose/docker-compose-nfs.yml pravega/docker/compose/
 ln -s pravega/docker/compose/docker-compose-nfs.yml docker-compose-nfs.yml
 
 cat > .env <<EOF
-PRAVEGA_BK_IMAGE=pravega_s:bk
+# PRAVEGA_BK_IMAGE=pravega_s:bk
 PRAVEGA_IMAGE=pravega_s:${PRAVEGA_VERSION}.0
 EOF
 
