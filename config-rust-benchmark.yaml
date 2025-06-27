@@ -1,0 +1,5 @@
+name: CONFIG_EXAMPLE
+address: "172.18.0.5:9090"
+payload_file: "/benchmark/payload-100b.data"
+message_num: 50
+producer_rate: 10
