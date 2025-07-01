@@ -101,12 +101,14 @@ services:
       ZK_URL: zookeeper:2181
       REST_SERVER_PORT: 10080
       JAVA_OPTS: |
-        -Dcontroller.service.rpc.listener.port=9090
-        -Xmx512m
-        -XX:OnError="kill -9 p%"
+        -Xms512m
         -XX:+ExitOnOutOfMemoryError
         -XX:+CrashOnOutOfMemoryError
         -XX:+HeapDumpOnOutOfMemoryError
+        -XX:HeapDumpPath=/tmp/dumpfile/heap
+        -XX:MaxRAMPercentage=50.0
+        -XX:+UseContainerSupport
+        -XX:+PrintExtendedThreadInfo
       SERVICE_HOST_IP: segmentstore
     links:
       - zookeeper
@@ -132,23 +134,22 @@ services:
       SCONE_HEAP: 30G
       SCONE_ESPINS: 1000000
       SCONE_SSPINS: 500
-      SCONE_SSLEEP: 1      
+      SCONE_SSLEEP: 1
       WAIT_FOR: bookie1:3181,bookie2:3182,bookie3:3183
       TIER2_STORAGE: "INMEMORY"
       NFS_MOUNT: /nfs
       ZK_URL: zookeeper:2181
       CONTROLLER_URL: tcp://controller:9090
       JAVA_OPTS: |
-        -Dpravegaservice.service.published.host.nameOrIp=segmentstore
-        -Dbookkeeper.ensemble.size=2
-        -Dbookkeeper.ack.quorum.size=2
-        -Dbookkeeper.write.quorum.size=2
-        -Dpravegaservice.cache.size.max=943718100
-        -Xmx900m
-        -XX:OnError="kill -9 p%"
+        -Xms4g
+        -Xmx4g
+        -XX:MaxDirectMemorySize=26g
         -XX:+ExitOnOutOfMemoryError
         -XX:+CrashOnOutOfMemoryError
         -XX:+HeapDumpOnOutOfMemoryError
+        -XX:HeapDumpPath=/tmp/dumpfile/heap
+        -XX:+UseContainerSupport
+        -XX:+PrintExtendedThreadInfo
     links:
       - zookeeper
       - bookie1
