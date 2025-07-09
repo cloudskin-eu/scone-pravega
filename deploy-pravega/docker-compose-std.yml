@@ -12,8 +12,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 version: '2'
+volumes:
+  nfs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=127.0.0.1,nolock,soft,rw
+      device: ":/pravega-data"
 services:
   zookeeper:
     image: zookeeper:3.6.1
@@ -24,6 +31,7 @@ services:
     image: pravega/bookkeeper
     ports:
       - "3181:3181"
+    restart: always
     environment:
       ZK_URL: zookeeper:2181
       bookiePort: 3181
@@ -34,6 +42,7 @@ services:
       image: pravega/bookkeeper
       ports:
         - "3182:3182"
+      restart: always
       environment:
         ZK_URL: zookeeper:2181
         bookiePort: 3182
@@ -44,6 +53,7 @@ services:
       image: pravega/bookkeeper
       ports:
         - "3183:3183"
+      restart: always
       environment:
         ZK_URL: zookeeper:2181
         bookiePort: 3183
@@ -76,27 +86,29 @@ services:
     ports:
       - "12345:12345"
     command: segmentstore
-    restart: always
-    privileged: true
+    volumes:
+      - nfs:/nfs/
     environment:
       WAIT_FOR: bookie1:3181,bookie2:3182,bookie3:3183
-      TIER2_STORAGE: "EXTENDEDS3"
-      EXTENDEDS3_ACCESS_KEY_ID: U3VNT902CYU0WB5CGRLY
-      EXTENDEDS3_BUCKET: pravega-test
-      EXTENDEDS3_SECRET_KEY: jSTbyD9g58ph_zxQ1YP_OUqk_Cd9CT9j41NH43s
-      EXTENDEDS3_URI: s3-production.kionetworks.es:20016
+      TIER2_STORAGE: "FILESYSTEM"
+      NFS_MOUNT: /nfs
       ZK_URL: zookeeper:2181
-      CONTROLLER_URL: tcp://172.16.3.10:9090
-      JAVA_OPTS: |
-        -Dpravegaservice.service.published.host.nameOrIp=172.16.3.10
+      CONTROLLER_URL: tcp://${HOST_IP}:9090
+      JAVA_OPTS: | 
+        -Dpravegaservice.service.published.host.nameOrIp=${HOST_IP}
         -Dbookkeeper.ensemble.size=2
         -Dbookkeeper.ack.quorum.size=2
         -Dbookkeeper.write.quorum.size=2
-        -Xmx900m
+        -Dpravegaservice.cache.size.max=943718100
         -XX:OnError="kill -9 p%"
         -XX:+ExitOnOutOfMemoryError
         -XX:+CrashOnOutOfMemoryError
         -XX:+HeapDumpOnOutOfMemoryError
+        -Xms4g
+        -Xmx4g
+        -XX:MaxDirectMemorySize=26g
+        -XX:+UseContainerSupport
+        -XX:+PrintExtendedThreadInfo
     links:
       - zookeeper
       - bookie1

@@ -14,11 +14,16 @@
 # limitations under the License.
 #
 version: '2'
+volumes:
+  nfs:
+    driver: local
+    driver_opts:
+      type: nfs
+      o: addr=127.0.0.1,nolock,soft,rw
+      device: ":/pravega-data"
 services:
   zookeeper:
     image: zookeeper:3.6.1
-    # image: registry.scontain.com:5050/sconecuratedimages/apps:zookeeper-3-alpine-scone5.9
-    restart: always
     ports:
       - "2181:2181"
     devices:
@@ -85,7 +90,6 @@ services:
       - "9090:9090"
       - "10080:10080"
     command: controller
-    restart: always
     devices:
       - /dev/sgx_enclave:/dev/sgx_enclave
     environment:
@@ -103,14 +107,10 @@ services:
       JAVA_OPTS: |
         -Dcontroller.service.rpc.listener.port=9090
         -Xmx512m
-        -Xms512m
         -XX:OnError="kill -9 p%"
         -XX:+ExitOnOutOfMemoryError
         -XX:+CrashOnOutOfMemoryError
         -XX:+HeapDumpOnOutOfMemoryError
-        -XX:MaxRAMPercentage=50.0
-        -XX:+UseContainerSupport
-        -XX:+PrintExtendedThreadInfo
       SERVICE_HOST_IP: segmentstore
     links:
       - zookeeper
@@ -122,11 +122,10 @@ services:
     ports:
       - "12345:12345"
     command: segmentstore
-    restart: always
     devices:
       - /dev/sgx_enclave:/dev/sgx_enclave
     volumes:
-      - ./data:/nfs/
+      - nfs:/nfs/
       - ./sgx-musl-controller.conf:/etc/sgx-musl.conf
     environment:
       SCONE_SLOTS: 384
@@ -138,15 +137,11 @@ services:
       SCONE_SSPINS: 500
       SCONE_SSLEEP: 1      
       WAIT_FOR: bookie1:3181,bookie2:3182,bookie3:3183
-      TIER2_STORAGE: "EXTENDEDS3"
-      EXTENDEDS3_ACCESS_KEY_ID: U3VNT902CYU0WB5CGRLY
-      EXTENDEDS3_BUCKET: pravega-test
-      EXTENDEDS3_SECRET_KEY: jSTbyD9g58ph_zxQ1YP_OUqk_Cd9CT9j41NH43s
-      EXTENDEDS3_URI: s3-production.kionetworks.es:20016
+      TIER2_STORAGE: "FILESYSTEM"
       ZK_URL: zookeeper:2181
-      CONTROLLER_URL: tcp://controller:9090
+      CONTROLLER_URL: tcp://${HOST_IP}:9090
       JAVA_OPTS: |
-        -Dpravegaservice.service.published.host.nameOrIp=segmentstore
+        -Dpravegaservice.service.published.host.nameOrIp=${HOST_IP}
         -Dbookkeeper.ensemble.size=2
         -Dbookkeeper.ack.quorum.size=2
         -Dbookkeeper.write.quorum.size=2
@@ -165,4 +160,4 @@ services:
       - bookie1
       - bookie2
       - bookie3
-      - controller
+
