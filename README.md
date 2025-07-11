@@ -3,7 +3,7 @@ Benchmarks for Sconified Pravega server images
 
 TL;DR:
 
-- Prepare the image by running : `./prepare_pravega.sh`.
+- Prepare the image by running : `./prepare_pravega.sh` in directory `build-pravega`.
 - Wait
 - Run docker compose : `docker compose --env-file .env -f pravega/docker/compose/docker-compose-nfs.yml up`
 - Wait again
@@ -31,35 +31,39 @@ The status could be seen in the table below.
 
 At this moment, we don't actually need to modify any pravega components. What needs to be changed is only some of the parameters and build process.
 
-The script [prepare_pravega.sh](./prepare_pravega.sh) is there to help you build the images based on the latest release in Github. (Currently 0.13)
+The script [prepare_pravega.sh](./build-pravega/prepare_pravega.sh) is there to help you build the images based on the latest release in Github. (Currently 0.13)
 
 Prerequisites : 
-- You need to have access to the BASE_IMAGE in [prepare_pravega.sh](./prepare_pravega.sh)
+- You need to have access to the BASE_IMAGE in [prepare_pravega.sh](./build-pravega/prepare_pravega.sh)
 - Right now it's `registry.scontain.com:5050/ardhipoetra/cloudskin-images/java:ubuntu20.04-scone5.10.0-rc.1`: java-compatible ubuntu-based scone runtime.
 
 Build process : 
-- execute [prepare_pravega.sh](./prepare_pravega.sh)
+- execute [prepare_pravega.sh](./build-pravega/prepare_pravega.sh)
 - This will build the necessary images (pravega and bookkeeper):
     - `pravega_s:<version>.0` for pravega, and
     - `pravega_s:bk` for bookkeeper
 - At the end, it will generate the .env file which should be consumed by docker-compose to spawn them.
 
+All the necessary files to build pravega image reside in the directory `build-pravega`.
+
 ## Deploy pravega 
 
-Apparently, you need to clear some leftover data, so do this beforehand: 
-`sudo rm -rf pravega/docker/compose/data/`
+All the necessary files to build pravega image reside in the directory `deploy-pravega`. The following commands assume that you are in that directory.
 
-Then, in this directory, invoke `docker compose --env-file .env -f pravega/docker/compose/docker-compose-nfs.yml up --force-recreate`
+Apparently, you need to clear some leftover data, so do this beforehand: 
+`sudo rm -rf ./data/`
+
+Then, in this directory, invoke `docker compose --env-file ../.env -f docker-compose-sgx.yml up --force-recreate` for SGX/SCONE variant. For the standard variant, use [docker-compose-std.yml](./deploy-pravega/docker-compose-std.yml) instead.
 
 Change `.env` file to switch image to use.
 
-**Important** : it's very important to also remove the containers before subsequent run! Somehow many things break if this is not being done. One can simply use `docker-compose -f pravega/docker/compose/docker-compose-nfs.yml down`.
+**Important** : it's very important to also remove the containers before subsequent run! Somehow many things break if this is not being done. One can simply use `docker-compose -f docker-compose-sgx.yml down`.
 
 All in all, I recommend the following command to copy-paste : 
 ```
-sudo rm -rf pravega/docker/compose/data/ \
-&& docker compose --env-file .env -f pravega/docker/compose/docker-compose-nfs.yml up --force-recreate \
-&& docker-compose -f pravega/docker/compose/docker-compose-nfs.yml down
+sudo rm -rf ./data/ \
+&& docker compose --env-file ../.env -f docker-compose-sgx.yml up --force-recreate \
+&& docker-compose -f docker-compose-sgx.yml down
 ```
 
 ## Test the deployment
