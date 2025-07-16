@@ -29,7 +29,7 @@ services:
     devices:
       - /dev/sgx_enclave:/dev/sgx_enclave
     environment:
-      SCONE_MODE: hw
+      SCONE_MODE: sim
       SCONE_VERSION: 1
 
   bookie1:
@@ -95,7 +95,7 @@ services:
       SCONE_SLOTS: 384
       SCONE_VERSION: 1
       SCONE_TCS: 48
-      SCONE_MODE: sim
+      SCONE_MODE: hw
       SCONE_HEAP: 30G
       SCONE_ESPINS: 1000000
       SCONE_SSPINS: 500
@@ -131,7 +131,7 @@ services:
       SCONE_SLOTS: 384
       SCONE_VERSION: 1
       SCONE_TCS: 48
-      SCONE_MODE: sim
+      SCONE_MODE: hw
       SCONE_HEAP: 48G
       SCONE_ESPINS: 1000000
       SCONE_SSPINS: 500
