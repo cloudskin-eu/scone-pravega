@@ -27,7 +27,7 @@ services:
     ports:
       - "2181:2181"
 
-  bookie1:
+  bookie:
     image: pravega/bookkeeper
     ports:
       - "3181:3181"
@@ -37,28 +37,6 @@ services:
       bookiePort: 3181
     links:
       - zookeeper
-
-  bookie2:
-      image: pravega/bookkeeper
-      ports:
-        - "3182:3182"
-      restart: always
-      environment:
-        ZK_URL: zookeeper:2181
-        bookiePort: 3182
-      links:
-        - zookeeper
-
-  bookie3:
-      image: pravega/bookkeeper
-      ports:
-        - "3183:3183"
-      restart: always
-      environment:
-        ZK_URL: zookeeper:2181
-        bookiePort: 3183
-      links:
-        - zookeeper
 
   controller:
     image: pravega/pravega
@@ -90,20 +68,20 @@ services:
     volumes:
       - nfs:/nfs/
     environment:
-      WAIT_FOR: bookie1:3181,bookie2:3182,bookie3:3183
+      WAIT_FOR: bookie:3181
       TIER2_STORAGE: "FILESYSTEM"
       NFS_MOUNT: /nfs
       ZK_URL: zookeeper:2181
       CONTROLLER_URL: tcp://${HOST_IP}:9090
       JAVA_OPTS: | 
         -Dpravegaservice.service.published.host.nameOrIp=${HOST_IP}
-        -Dbookkeeper.ensemble.size=2
-        -Dbookkeeper.ack.quorum.size=2
-        -Dbookkeeper.write.quorum.size=2
-        -Xms40g
-        -Xmx40g
-        -XX:MaxDirectMemorySize=16g
-        -Dpravegaservice.cache.size.max=14000000000
+        -Dbookkeeper.ensemble.size=1
+        -Dbookkeeper.ack.quorum.size=1
+        -Dbookkeeper.write.quorum.size=1
+        -Xms4g
+        -Xmx4g
+        -XX:MaxDirectMemorySize=26g
+        -Dpravegaservice.cache.size.max=23622320128
         -XX:OnError="kill -9 p%"
         -XX:+ExitOnOutOfMemoryError
         -XX:+CrashOnOutOfMemoryError
@@ -112,7 +90,5 @@ services:
         -XX:+PrintExtendedThreadInfo
     links:
       - zookeeper
-      - bookie1
-      - bookie2
-      - bookie3
+      - bookie
 
