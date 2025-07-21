@@ -62,7 +62,7 @@ services:
       SCONE_VERSION: 1
       SCONE_TCS: 48
       SCONE_MODE: hw
-      SCONE_HEAP: 30G
+      SCONE_HEAP: 56G
       SCONE_ESPINS: 1000000
       SCONE_SSPINS: 500
       SCONE_SSLEEP: 1
@@ -98,7 +98,7 @@ services:
       SCONE_VERSION: 1
       SCONE_TCS: 48
       SCONE_MODE: hw
-      SCONE_HEAP: 48G
+      SCONE_HEAP: 56G
       SCONE_ESPINS: 1000000
       SCONE_SSPINS: 500
       SCONE_SSLEEP: 1      
