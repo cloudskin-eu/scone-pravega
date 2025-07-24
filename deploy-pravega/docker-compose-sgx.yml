@@ -50,7 +50,7 @@ services:
       - zookeeper
 
   controller:
-    image: ${PRAVEGA_IMAGE:-pravega/pravega}
+    image: ${PRAVEGA_IMAGE:-pravega_s:0.13.0}
     ports:
       - "9090:9090"
       - "10080:10080"
@@ -84,7 +84,7 @@ services:
       - ./sgx-musl-controller.conf:/etc/sgx-musl.conf
 
   segmentstore:
-    image: ${PRAVEGA_IMAGE:-pravega/pravega}
+    image: ${PRAVEGA_IMAGE:-pravega_s:0.13.0}
     ports:
       - "12345:12345"
     command: segmentstore
