@@ -1,0 +1,3 @@
+# PRAVEGA_BK_IMAGE=pravega_s:bk
+PRAVEGA_IMAGE=pravega_s:0.13.0
+

@@ -52,7 +52,7 @@ docker-compose -f ./docker-compose-std.yml down
 
 Deploying:
 ```
-docker compose -f ./docker-compose-sgx.yml up -d
+docker compose --env-file ./env -f ./docker-compose-sgx.yml up -d
 ```
 
 Check logs:
@@ -62,7 +62,7 @@ docker compose -f ./docker-compose-sgx.yml logs -f
 
 Undeploy:
 ```
-docker-compose -f ./docker-compose-sgx.yml down
+docker-compose --env-file ./env -f ./docker-compose-sgx.yml down
 ```
 
 ## Cleaning Data
