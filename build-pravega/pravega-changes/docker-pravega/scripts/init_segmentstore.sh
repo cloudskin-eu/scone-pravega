@@ -24,7 +24,7 @@ init_segmentstore() {
     add_system_property "autoScale.controller.connect.uri" "${CONTROLLER_URL}"
     add_system_property "bookkeeper.zk.connect.uri" "${BK_ZK_URL:-${ZK_URL}}"
     add_system_property "pravegaservice.storageThreadPool.size" "${STORAGE_THREAD_POOL_SIZE}"
-    add_system_property "pravegaservice.cache.size.max" "429496729"
+#    add_system_property "pravegaservice.cache.size.max" "429496729"
     [ -d "$INFLUX_DB_SECRET_MOUNT_PATH" ] \
     && [ -f "$INFLUX_DB_SECRET_MOUNT_PATH"/username ] && [ -f  "$INFLUX_DB_SECRET_MOUNT_PATH"/password ] \
     && add_system_property "metrics.influxDB.connect.credentials.username"  "$(cat "$INFLUX_DB_SECRET_MOUNT_PATH"/username)" \

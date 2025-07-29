@@ -23,7 +23,7 @@ cp -rf pravega-changes/docker-pravega/scripts pravega/docker/pravega/
 pushd pravega/docker/pravega
 docker build --no-cache --build-arg BASE_IMAGE=${BASE_IMAGE}\
              --build-arg PRAVEGA_VERSION=${PRAVEGA_VERSION}\
-            -t pravega_s:${PRAVEGA_VERSION}.0 .
+            -t pravega_s:${PRAVEGA_VERSION}.1 .
 popd
 
 # pravega-bookkeeper
